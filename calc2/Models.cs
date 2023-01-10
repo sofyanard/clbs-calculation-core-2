@@ -113,12 +113,12 @@ namespace calc2
     public class PosisiBakiDebet
     {
         public long Id { get; set; }
-        public int PeriodeKe { get; set; }
+        public int? PeriodeKe { get; set; }
         public DateTime MulaiBakiDebet { get; set; }
         public DateTime AkhirBakiDebet { get; set; }
         public int JumlahHariBakiDebet { get; set; }
         public double BakiDebet { get; set; }
         public double Bunga { get; set; }
-        public double JumlahBunga { get; set; }
+        public double? JumlahBunga { get; set; }
     }
 }
