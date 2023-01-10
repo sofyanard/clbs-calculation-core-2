@@ -191,11 +191,9 @@ public class Program
                         arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet = (arrPosisiBakiDebet[n - 1].AkhirBakiDebet - arrPosisiBakiDebet[n - 1].MulaiBakiDebet).Days;
                         logger.LogInformation("arrPosisiBakiDebet[{0}].JumlahHariBakiDebet = {1:d}", n - 1, arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet);
 
-                        /*
                         bunga = ((double)arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet / (double)360.0) * interest * (double)arrPosisiBakiDebet[n - 1].BakiDebet;
                         arrPosisiBakiDebet[n - 1].Bunga = bunga;
                         logger.LogInformation("arrPosisiBakiDebet[{0}].Bunga = {1:C}", n - 1, arrPosisiBakiDebet[n - 1].Bunga);
-                        */
 
                         // Hitung Fasilitas
                         facility.BakiDebet += transaction.TransactionAmount;
@@ -229,13 +227,17 @@ public class Program
 
             arrPosisiBakiDebet[n].JumlahHariBakiDebet = (arrPosisiBakiDebet[n].AkhirBakiDebet - arrPosisiBakiDebet[n].MulaiBakiDebet).Days;
             logger.LogInformation("arrPosisiBakiDebet[{0}].JumlahHariBakiDebet = {1:d}", n, arrPosisiBakiDebet[n].JumlahHariBakiDebet);
+
+            bunga = ((double)arrPosisiBakiDebet[n].JumlahHariBakiDebet / (double)360.0) * interest * (double)arrPosisiBakiDebet[n].BakiDebet;
+            arrPosisiBakiDebet[n].Bunga = bunga;
+            logger.LogInformation("arrPosisiBakiDebet[{0}].Bunga = {1:C}", n, arrPosisiBakiDebet[n].Bunga);
         }
 
         logger.LogInformation("Finish creating array of posisi bakidebet!");
 
         for (int i = 0; i < arrPosisiBakiDebet.Length; i++)
         {
-            logger.LogInformation("{0} | {1:d} | {2:d} | {3} | {4:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet);
+            logger.LogInformation("{0} | {1:d} | {2:d} | {3} | {4:C} | {5:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet, arrPosisiBakiDebet[i].Bunga);
         }
 
         logger.LogInformation("Program is completed!");
