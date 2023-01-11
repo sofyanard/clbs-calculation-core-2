@@ -45,7 +45,10 @@ public class Program
             new Transaction(1, 1, EnumTransactionType.Pencairan, new DateTime(2022, 1, 16), 3000000),
             new Transaction(2, 1, EnumTransactionType.Pencairan, new DateTime(2022, 3, 16), 2000000),
             new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 16), 1000000),
-            new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 26), 2000000)
+            new Transaction(4, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 26), 2000000),
+            new Transaction(5, 1, EnumTransactionType.PembayaranPokok, new DateTime(2022, 2, 6), 1000000),
+            new Transaction(6, 1, EnumTransactionType.PembayaranPokok, new DateTime(2022, 6, 6), 1000000),
+            new Transaction(7, 1, EnumTransactionType.PembayaranPokok, new DateTime(2022, 8, 6), 2000000)
         };
 
         /*******************/
@@ -156,6 +159,7 @@ public class Program
             arrBilling[i].Id = i;
             arrBilling[i].PeriodeKe = i;
             arrBilling[i].DueDate = arrDueDate[i];
+            arrBilling[i].DueDateX = arrDueDate[i].AddDays(10);
 
             double billPokok = 0, billBunga = 0, billDendaPokok = 0, billDendaBunga = 0;
 
@@ -234,12 +238,48 @@ public class Program
                         logger.LogInformation("arrPosisiBakiDebet[{0}].BakiDebet = {1:C}", n, arrPosisiBakiDebet[n].BakiDebet);
 
                         break;
+
                     case EnumTransactionType.PembayaranPokok:
+                        Array.Resize(ref arrPosisiBakiDebet, arrPosisiBakiDebet.Length + 1);
+                        n++;
+                        arrPosisiBakiDebet[n] = new PosisiBakiDebet();
+                        logger.LogInformation("Add arrPosisiBakiDebet[{0}]", n);
+                        arrPosisiBakiDebet[n].Id = n;
+                        arrPosisiBakiDebet[n].PeriodeKe = i;
+
+                        // Hitung arrPosisiBakiDebet[N-1]
+                        arrPosisiBakiDebet[n - 1].AkhirBakiDebet = transaction.TransactionDate;
+                        logger.LogInformation("arrPosisiBakiDebet[{0}].AkhirBakiDebet = {1:d}", n - 1, arrPosisiBakiDebet[n - 1].AkhirBakiDebet);
+
+                        arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet = (arrPosisiBakiDebet[n - 1].AkhirBakiDebet - arrPosisiBakiDebet[n - 1].MulaiBakiDebet).Days;
+                        logger.LogInformation("arrPosisiBakiDebet[{0}].JumlahHariBakiDebet = {1:d}", n - 1, arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet);
+
+                        bunga = ((double)arrPosisiBakiDebet[n - 1].JumlahHariBakiDebet / (double)360.0) * interest * (double)arrPosisiBakiDebet[n - 1].BakiDebet;
+                        arrPosisiBakiDebet[n - 1].Bunga = bunga;
+                        logger.LogInformation("arrPosisiBakiDebet[{0}].Bunga = {1:C}", n - 1, arrPosisiBakiDebet[n - 1].Bunga);
+
+                        billBunga += bunga;
+
+                        // Hitung Fasilitas
+                        facility.BakiDebet -= transaction.TransactionAmount;
+                        logger.LogInformation("facility.BakiDebet = {0:C}", facility.BakiDebet);
+
+                        facility.AvailableLimit += transaction.TransactionAmount;
+                        logger.LogInformation("facility.AvailableLimit = {0:C}", facility.AvailableLimit);
+
+                        // Hitung arrPosisiBakiDebet[N]
+                        arrPosisiBakiDebet[n].MulaiBakiDebet = transaction.TransactionDate;
+                        logger.LogInformation("arrPosisiBakiDebet[{0}].MulaiBakiDebet = {1:d}", n, arrPosisiBakiDebet[n].MulaiBakiDebet);
+
+                        arrPosisiBakiDebet[n].BakiDebet = (double)facility.BakiDebet;
+                        logger.LogInformation("arrPosisiBakiDebet[{0}].BakiDebet = {1:C}", n, arrPosisiBakiDebet[n].BakiDebet);
 
                         break;
+
                     case EnumTransactionType.PembayaranBunga:
 
                         break;
+
                     default:
                         break;
                 }

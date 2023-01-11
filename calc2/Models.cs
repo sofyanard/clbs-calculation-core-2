@@ -98,6 +98,7 @@ namespace calc2
         public int FacilityId { get; set; }
         public int? PeriodeKe { get; set; }
         public DateTime DueDate { get; set; }
+        public DateTime DueDateX { get; set; }
         public double? Pokok { get; set; }
         public double? Bunga { get; set; }
         public double? DendaPokok { get; set; }
