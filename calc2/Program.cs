@@ -30,7 +30,7 @@ public class Program
         facility.MaturityDate = new DateTime(2023, 1, 1);
         facility.IsRevolving = true;
         facility.PeriodePerhitunganBunga = EnumPeriod.Bulanan;
-        facility.PeriodePerhitunganPokok = EnumPeriod.Triwulanan;
+        facility.PeriodePerhitunganPokok = EnumPeriod.JatuhTempo;
         facility.TanggalCutOff = 31;
 
         facility.BakiDebet = 0;
@@ -42,15 +42,15 @@ public class Program
 
         List<Transaction> listTransaction = new List<Transaction>()
         {
-            new Transaction(1, 1, EnumTransactionType.Pencairan, new DateTime(2022, 1, 16), 3000000),
+            //new Transaction(1, 1, EnumTransactionType.Pencairan, new DateTime(2022, 1, 16), 3000000),
             new Transaction(2, 1, EnumTransactionType.Pencairan, new DateTime(2022, 3, 16), 2000000),
             new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 16), 1000000),
             new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 26), 2000000)
         };
 
-        /******************/
-        /*** Calulation ***/
-        /******************/
+        /*******************/
+        /*** CALCULATION ***/
+        /*******************/
 
         // Array of Due-Date
         DateTime[] arrDueDate = new DateTime[1];
@@ -62,6 +62,10 @@ public class Program
         {
             throw new Exception("Tanggal Cut-Off tidak valid!");
         }
+
+        /**********************************/
+        /*** Creating Array of Due-Date ***/
+        /**********************************/
 
         // Due-Date[1] s/d Due-Date[N-1]
         DateTime nextDueDate;
@@ -126,7 +130,11 @@ public class Program
         logger.LogInformation("arrDueDate[{n}]: {1:d}", arrDueDate.Length - 1, arrDueDate[arrDueDate.Length - 1]);
 
         logger.LogInformation("Finish creating array of due date");
-        
+
+        /******************************************/
+        /*** Creating Table of Posisi BakiDebet ***/
+        /******************************************/
+
         n = 0;
         PosisiBakiDebet[] arrPosisiBakiDebet = new PosisiBakiDebet[1];
         arrPosisiBakiDebet[0] = new PosisiBakiDebet();
@@ -140,7 +148,7 @@ public class Program
             logger.LogInformation("Starting period: {0:d}", arrDueDate[i]);
 
             // Awal Periode
-            if (n > 0)
+            if ((n > 0) || (i > 0))
             {
                 Array.Resize(ref arrPosisiBakiDebet, arrPosisiBakiDebet.Length + 1);
                 n++;
