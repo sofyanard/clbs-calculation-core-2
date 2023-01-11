@@ -24,6 +24,15 @@ namespace calc2
         PembayaranBunga = 4
     }
 
+    public enum EnumKolektibilitas
+    {
+        Lancar = 1,
+        DalamPerhatianKhusus = 2,
+        KurangLancar = 3,
+        Diragukan = 4,
+        Macet = 5
+    }
+
     public class Collect
     {
         public int Status { get; set; }
@@ -105,6 +114,7 @@ namespace calc2
         public double? DendaBunga { get; set; }
         public double? Lainnya { get; set; }
         public int? Dpd { get; set; }
+        public int? DpdX { get; set; }
         public bool? IsPaid { get; set; }
         public DateTime? PaidDate { get; set; }
         public double? PaidAmount { get; set; }

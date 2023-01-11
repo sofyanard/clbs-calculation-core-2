@@ -1,6 +1,7 @@
 ﻿using calc2;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
+using System.Runtime.Intrinsics.Arm;
 
 public class Program
 {
@@ -26,6 +27,7 @@ public class Program
         facility.Limit = 10000000;
         facility.Tenor = 12;
         facility.InterestRate = 12;
+        facility.DendaRate = 24;
         facility.StartDate = new DateTime(2022, 1, 1);
         facility.MaturityDate = new DateTime(2023, 1, 1);
         facility.IsRevolving = true;
@@ -175,7 +177,7 @@ public class Program
                 arrPosisiBakiDebet[n].MulaiBakiDebet = arrDueDate[i];
                 arrPosisiBakiDebet[n].BakiDebet = arrPosisiBakiDebet[n - 1].BakiDebet;
             }
-            
+
             // Cari semua transaksi dalam periode ini
             List<Transaction> listTransactionInPeriod;
             if (i == 0)
@@ -300,16 +302,55 @@ public class Program
             arrBilling[i].Bunga = billBunga;
         }
 
-        logger.LogInformation("Finish looping array of posisi bakidebet!");
+        logger.LogInformation("Posisi BakiDebet...");
 
         for (int i = 0; i < arrPosisiBakiDebet.Length; i++)
         {
             logger.LogInformation("{0} | {1} | {2:d} | {3:d} | {4} | {5:C} | {6:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].PeriodeKe, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet, arrPosisiBakiDebet[i].Bunga);
         }
 
+        logger.LogInformation("Posisi Tagihan Bunga...");
+
         for (int i = 0; i < arrBilling.Length; i++)
         {
             logger.LogInformation("{0} | {1:d} | {2:C}", arrBilling[i].Id, arrBilling[i].DueDate, arrBilling[i].Bunga);
+        }
+
+        logger.LogInformation("Menghitung DPD, Kolektibilitas, Denda...");
+
+        for (int i = 0; i < arrBilling.Length; i++)
+        {
+            if ((arrBilling[i].IsPaid == null) || (arrBilling[i].IsPaid == false))
+            {
+                int dpd = (DateTime.Today - arrBilling[i].DueDate).Days;
+                if (dpd < 0) { dpd = 0; }
+                arrBilling[i].Dpd = dpd;
+
+                // ini dpd menurut celebes
+                int dpdX = (DateTime.Today - arrBilling[i].DueDateX).Days;
+                if (dpdX < 0) { dpdX = 0; }
+                arrBilling[i].DpdX = dpdX;
+
+                // Hitung Denda Bunga
+                // menurut celebes pakai yg dpdX
+                if (dpdX > 0)
+                {
+                    double dendaBunga = ((double)dpdX / (double)360) * ((double)facility.DendaRate / (double)100) * (double)arrBilling[i].Bunga;
+                    arrBilling[i].DendaBunga = dendaBunga;
+                }
+            }
+            else
+            {
+                arrBilling[i].Dpd = 0;
+                arrBilling[i].DpdX = 0;
+            }
+        }
+
+        logger.LogInformation("Posisi Tagihan...");
+
+        for (int i = 0; i < arrBilling.Length; i++)
+        {
+            logger.LogInformation("{0} | {1:d} | {2:C} | {3:C} | {4:C} | {5:C} | {6} | {7}", arrBilling[i].Id, arrBilling[i].DueDate, arrBilling[i].Pokok, arrBilling[i].Bunga, arrBilling[i].DendaPokok, arrBilling[i].DendaBunga, arrBilling[i].Dpd, arrBilling[i].DpdX);
         }
 
         logger.LogInformation("Program is completed!");
