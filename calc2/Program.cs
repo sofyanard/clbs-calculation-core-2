@@ -132,7 +132,8 @@ public class Program
         logger.LogInformation("Finish creating array of due date");
 
         /******************************************/
-        /*** Creating Table of Posisi BakiDebet ***/
+        /*** Creating Array of Posisi BakiDebet ***/
+        /*** Creating Array of Billing          ***/
         /******************************************/
 
         n = 0;
@@ -144,9 +145,19 @@ public class Program
         arrPosisiBakiDebet[0].MulaiBakiDebet = arrDueDate[0];
         arrPosisiBakiDebet[0].BakiDebet = 0;
 
+        Billing[] arrBilling = new Billing[0];
+
         for (int i = 0; i < arrDueDate.Length - 1; i++)
         {
             logger.LogInformation("Starting period: {0:d}", arrDueDate[i]);
+
+            Array.Resize(ref arrBilling, arrBilling.Length + 1);
+            arrBilling[i] = new Billing();
+            arrBilling[i].Id = i;
+            arrBilling[i].PeriodeKe = i;
+            arrBilling[i].DueDate = arrDueDate[i];
+
+            double billPokok = 0, billBunga = 0, billDendaPokok = 0, billDendaBunga = 0;
 
             // Awal Periode
             if ((n > 0) || (i > 0))
@@ -206,6 +217,8 @@ public class Program
                         arrPosisiBakiDebet[n - 1].Bunga = bunga;
                         logger.LogInformation("arrPosisiBakiDebet[{0}].Bunga = {1:C}", n - 1, arrPosisiBakiDebet[n - 1].Bunga);
 
+                        billBunga += bunga;
+
                         // Hitung Fasilitas
                         facility.BakiDebet += transaction.TransactionAmount;
                         logger.LogInformation("facility.BakiDebet = {0:C}", facility.BakiDebet);
@@ -242,13 +255,21 @@ public class Program
             bunga = ((double)arrPosisiBakiDebet[n].JumlahHariBakiDebet / (double)360.0) * interest * (double)arrPosisiBakiDebet[n].BakiDebet;
             arrPosisiBakiDebet[n].Bunga = bunga;
             logger.LogInformation("arrPosisiBakiDebet[{0}].Bunga = {1:C}", n, arrPosisiBakiDebet[n].Bunga);
+
+            billBunga += bunga;
+            arrBilling[i].Bunga = billBunga;
         }
 
-        logger.LogInformation("Finish creating array of posisi bakidebet!");
+        logger.LogInformation("Finish looping array of posisi bakidebet!");
 
         for (int i = 0; i < arrPosisiBakiDebet.Length; i++)
         {
             logger.LogInformation("{0} | {1} | {2:d} | {3:d} | {4} | {5:C} | {6:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].PeriodeKe, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet, arrPosisiBakiDebet[i].Bunga);
+        }
+
+        for (int i = 0; i < arrBilling.Length; i++)
+        {
+            logger.LogInformation("{0} | {1:d} | {2:C}", arrBilling[i].Id, arrBilling[i].DueDate, arrBilling[i].Bunga);
         }
 
         logger.LogInformation("Program is completed!");
