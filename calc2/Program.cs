@@ -42,7 +42,7 @@ public class Program
 
         List<Transaction> listTransaction = new List<Transaction>()
         {
-            //new Transaction(1, 1, EnumTransactionType.Pencairan, new DateTime(2022, 1, 16), 3000000),
+            new Transaction(1, 1, EnumTransactionType.Pencairan, new DateTime(2022, 1, 16), 3000000),
             new Transaction(2, 1, EnumTransactionType.Pencairan, new DateTime(2022, 3, 16), 2000000),
             new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 16), 1000000),
             new Transaction(3, 1, EnumTransactionType.Pencairan, new DateTime(2022, 5, 26), 2000000)
@@ -140,6 +140,7 @@ public class Program
         arrPosisiBakiDebet[0] = new PosisiBakiDebet();
         logger.LogInformation("Add arrPosisiBakiDebet[0]");
         arrPosisiBakiDebet[0].Id = n;
+        arrPosisiBakiDebet[0].PeriodeKe = 0;
         arrPosisiBakiDebet[0].MulaiBakiDebet = arrDueDate[0];
         arrPosisiBakiDebet[0].BakiDebet = 0;
 
@@ -155,6 +156,7 @@ public class Program
                 arrPosisiBakiDebet[n] = new PosisiBakiDebet();
                 logger.LogInformation("Add arrPosisiBakiDebet[{0}]", n);
                 arrPosisiBakiDebet[n].Id = n;
+                arrPosisiBakiDebet[n].PeriodeKe = i;
                 arrPosisiBakiDebet[n].MulaiBakiDebet = arrDueDate[i];
                 arrPosisiBakiDebet[n].BakiDebet = arrPosisiBakiDebet[n - 1].BakiDebet;
             }
@@ -191,6 +193,7 @@ public class Program
                         arrPosisiBakiDebet[n] = new PosisiBakiDebet();
                         logger.LogInformation("Add arrPosisiBakiDebet[{0}]", n);
                         arrPosisiBakiDebet[n].Id = n;
+                        arrPosisiBakiDebet[n].PeriodeKe = i;
 
                         // Hitung arrPosisiBakiDebet[N-1]
                         arrPosisiBakiDebet[n - 1].AkhirBakiDebet = transaction.TransactionDate;
@@ -245,7 +248,7 @@ public class Program
 
         for (int i = 0; i < arrPosisiBakiDebet.Length; i++)
         {
-            logger.LogInformation("{0} | {1:d} | {2:d} | {3} | {4:C} | {5:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet, arrPosisiBakiDebet[i].Bunga);
+            logger.LogInformation("{0} | {1} | {2:d} | {3:d} | {4} | {5:C} | {6:C}", arrPosisiBakiDebet[i].Id, arrPosisiBakiDebet[i].PeriodeKe, arrPosisiBakiDebet[i].MulaiBakiDebet, arrPosisiBakiDebet[i].AkhirBakiDebet, arrPosisiBakiDebet[i].JumlahHariBakiDebet, arrPosisiBakiDebet[i].BakiDebet, arrPosisiBakiDebet[i].Bunga);
         }
 
         logger.LogInformation("Program is completed!");
